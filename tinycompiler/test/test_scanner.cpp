@@ -31,6 +31,7 @@ TEST_CASE( "Scanner::getToken correctness", "[Scanner]" ) {
     REQUIRE(scanner.getToken() == TokenType::NUM);
     REQUIRE(scanner.getToken() == TokenType::SEMI);
     REQUIRE(scanner.getToken() == TokenType::END);
+    REQUIRE(scanner.getToken() == TokenType::ENDFILE);
 
     input_data = "a1 := (186 - 23) / 2;";
     scanner.setInput(input_data.c_str(), input_data.size());
@@ -44,4 +45,21 @@ TEST_CASE( "Scanner::getToken correctness", "[Scanner]" ) {
     REQUIRE(scanner.getToken() == TokenType::OVER);
     REQUIRE(scanner.getToken() == TokenType::NUM);
     REQUIRE(scanner.getToken() == TokenType::SEMI);
+    REQUIRE(scanner.getToken() == TokenType::ENDFILE);
+
+    input_data = "a2 := a1 * 5 / (a + a1); { this is a comment }";
+    scanner.setInput(input_data.c_str(), input_data.size());
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::ASSIGN);
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::TIMES);
+    REQUIRE(scanner.getToken() == TokenType::NUM);
+    REQUIRE(scanner.getToken() == TokenType::OVER);
+    REQUIRE(scanner.getToken() == TokenType::LPAREN);
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::PLUS);
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::RPAREN);
+    REQUIRE(scanner.getToken() == TokenType::SEMI);
+    REQUIRE(scanner.getToken() == TokenType::ENDFILE);
 }

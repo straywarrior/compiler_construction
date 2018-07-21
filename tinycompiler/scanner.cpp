@@ -90,7 +90,7 @@ TokenType Scanner::getToken() {
             this->putNextChar();
         } else if (state == StateType::IN_NUM && symbol_type != DIGIT) {
             this->putNextChar();
-        } else {
+        } else if (c != '\0') {
             token_string.push_back(c);
         }
         state = transition_table[state][symbol_type];
@@ -102,6 +102,8 @@ TokenType Scanner::getToken() {
         case StateType::START:
             if (reserved_words.find(token_string) != reserved_words.end()) {
                 token = reserved_words[token_string];
+            } else if (token_string.empty()) {
+                token = TokenType::ENDFILE;
             }
             break;
         case StateType::IN_NUM:
@@ -124,7 +126,7 @@ TokenType Scanner::getToken() {
 }
 
 char Scanner::getNextChar() {
-    if (input_data_ != nullptr && current_ptr_ != input_end_) {
+    if (input_data_ != nullptr && current_ptr_ <= input_end_) {
         return *(current_ptr_++);
     } else {
         return '\0';
@@ -132,7 +134,8 @@ char Scanner::getNextChar() {
 }
 
 void Scanner::putNextChar() {
-    --current_ptr_;
+    if (current_ptr_ <= input_end_)
+        --current_ptr_;
 }
 
 void Scanner::setInput(const char *input_data, size_t input_len) {
