@@ -52,6 +52,10 @@ bool is_whitespace(char c) {
     return c == ' ' || c == '\t';
 }
 
+bool is_newline(char c) {
+    return c == '\r' || c == '\n';
+}
+
 static SymbolType getSymbolType(char c) {
     if (is_letter(c)) {
         return SymbolType::LETTER;
@@ -67,6 +71,8 @@ static SymbolType getSymbolType(char c) {
         return SymbolType::LEFT_BRACE;
     } else if (c == '}') {
         return SymbolType::RIGHT_BRACE;
+    } else if (is_newline(c)) {
+        return SymbolType::WHITE_SPACE;
     } else {
         return SymbolType::OTHER;
     }
@@ -125,8 +131,31 @@ TokenType Scanner::getToken() {
     return token;
 }
 
+void Scanner::setNextLine() {
+    ++line_number_;
+    for (const char *ptr = current_ptr_; ptr < input_end_; ++ptr) {
+        if (*ptr == '\r') {
+            if (ptr + 1 < input_end_ && *(ptr + 1) == '\n') {
+                // for Windows
+                line_end_ = ++ptr;
+            } else {
+                // for old Mac
+                line_end_ = ptr;
+            }
+        } else if (*ptr == '\n') {
+            line_end_ = ptr;
+        }
+    }
+}
+
 char Scanner::getNextChar() {
-    if (input_data_ != nullptr && current_ptr_ <= input_end_) {
+    if (input_data_ == nullptr) {
+        return '\0';
+    }
+    if (input_data_ == line_end_) {
+        this->setNextLine();
+    }
+    if (current_ptr_ <= input_end_) {
         return *(current_ptr_++);
     } else {
         return '\0';
@@ -143,6 +172,7 @@ void Scanner::setInput(const char *input_data, size_t input_len) {
     current_ptr_ = input_data_;
     if (input_data_ != nullptr) {
         input_end_ = input_data_ + input_len;
+        line_end_ = input_data_;
     }
 }
 

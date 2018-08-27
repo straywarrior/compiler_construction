@@ -63,3 +63,24 @@ TEST_CASE( "Scanner::getToken correctness", "[Scanner]" ) {
     REQUIRE(scanner.getToken() == TokenType::SEMI);
     REQUIRE(scanner.getToken() == TokenType::ENDFILE);
 }
+
+TEST_CASE( "Scanner::getToken multi-line correctness", "[Scanner]" ) {
+    Scanner scanner;
+    std::string input_data;
+    input_data = "if (a < 0) then\r\na := a + 1\nend";
+    scanner.setInput(input_data.c_str(), input_data.size());
+    REQUIRE(scanner.getToken() == TokenType::IF);
+    REQUIRE(scanner.getToken() == TokenType::LPAREN);
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::LT);
+    REQUIRE(scanner.getToken() == TokenType::NUM);
+    REQUIRE(scanner.getToken() == TokenType::RPAREN);
+    REQUIRE(scanner.getToken() == TokenType::THEN);
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::ASSIGN);
+    REQUIRE(scanner.getToken() == TokenType::ID);
+    REQUIRE(scanner.getToken() == TokenType::PLUS);
+    REQUIRE(scanner.getToken() == TokenType::NUM);
+    REQUIRE(scanner.getToken() == TokenType::END);
+    REQUIRE(scanner.getToken() == TokenType::ENDFILE);
+}

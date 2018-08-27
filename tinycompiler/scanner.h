@@ -39,11 +39,14 @@ public:
 private:
     char getNextChar();
     void putNextChar();
+    void setNextLine();
 
 private:
     const char *input_data_ = nullptr;
     const char *current_ptr_ = nullptr;
+    const char *line_end_ = nullptr;
     const char *input_end_ = nullptr;
+    size_t line_number_ = 0;
 }; /* class Scanner */
 
 } /* namespace tinylang */
