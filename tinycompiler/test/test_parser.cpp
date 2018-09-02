@@ -111,7 +111,31 @@ TEST_CASE( "Parser::stmt_sequence correctness", "[Parser]" ) {
 TEST_CASE( "Parser::parse correctness", "[Parser]" ) {
     Parser parser;
     std::string input_data;
-    input_data = "if (a < 0) then a := a + 1 end";
+    input_data = "if (a < 0) then\nbar := a + 233\nend";
     TreeNode *tree = parser.parse(input_data.c_str(), input_data.size());
     REQUIRE(tree != nullptr);
+    REQUIRE(tree->node_type == NodeStmt);
+    REQUIRE(tree->stmt == StmtIf);
+    // node: a < 0
+    TreeNode *node = tree->children[0];
+    REQUIRE(node != nullptr);
+    REQUIRE(node->node_type == NodeExpr);
+    REQUIRE(node->expr == ExprOp);
+    REQUIRE(node->attr.op == TokenType::LT);
+    REQUIRE_STRCMP(node->children[0]->attr.name, "a");
+    REQUIRE(node->children[1]->attr.val == 0);
+
+    // node: bar := a + 1
+    node = tree->children[1];
+    REQUIRE(node != nullptr);
+    REQUIRE(node->node_type == NodeStmt);
+    REQUIRE(node->stmt == StmtAssign);
+    REQUIRE_STRCMP(node->attr.name, "bar");
+    node = node->children[0];
+    REQUIRE(node->node_type == NodeExpr);
+    REQUIRE(node->expr == ExprOp);
+    REQUIRE(node->attr.op == TokenType::PLUS);
+    REQUIRE_STRCMP(node->children[0]->attr.name, "a");
+    REQUIRE(node->children[1]->attr.val == 233);
+    destroyTreeNode(tree);
 }
