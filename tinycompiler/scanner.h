@@ -9,6 +9,7 @@
 #define SCANNER_H
 
 #include <cstddef>
+#include <string>
 
 namespace tinylang {
 /*
@@ -32,7 +33,12 @@ class Scanner {
 public:
     Scanner();
 
-    TokenType getToken();
+    /**
+     * @brief Try to get next token
+     *
+     * @param token_str The token string will be set if token_str != nullptr
+     */
+    TokenType getToken(std::string *token_str = nullptr);
 
     void setInput(const char *input_data, size_t input_len);
 

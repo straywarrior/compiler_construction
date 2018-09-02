@@ -7,7 +7,6 @@
 
 #include "scanner.h"
 #include <vector>
-#include <string>
 #include <unordered_map>
 #include <algorithm>
 
@@ -82,7 +81,7 @@ Scanner::Scanner() {
     initTransitionTable();
 }
 
-TokenType Scanner::getToken() {
+TokenType Scanner::getToken(std::string *token_str) {
     StateType state = StateType::START;
     StateType last_state;
     TokenType token = TokenType::ERROR;
@@ -127,6 +126,9 @@ TokenType Scanner::getToken() {
             break;
         default:
             break;
+    }
+    if (token_str != nullptr) {
+        *token_str = token_string;
     }
     return token;
 }
