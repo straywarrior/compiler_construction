@@ -58,6 +58,11 @@ struct TreeNode {
     ExprType expr_type;
 };
 
+/**
+ * @brief Destroy the TreeNode recursively
+ */
+void destroyTreeNode(TreeNode *tree);
+
 class Parser {
 public:
     /** @brief

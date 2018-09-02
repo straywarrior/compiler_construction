@@ -27,6 +27,7 @@ TEST_CASE( "Parser::term correctness", "[Parser]" ) {
     REQUIRE(tree != nullptr);
     REQUIRE(tree->node_type == NodeExpr);
     REQUIRE(tree->attr.op == TokenType::TIMES);
+    destroyTreeNode(tree);
 
     input_data = "(1 + 2) * rhs";
     parser.init_scanner(input_data.c_str(), input_data.size());
@@ -42,6 +43,7 @@ TEST_CASE( "Parser::term correctness", "[Parser]" ) {
     node = tree->children[1];
     REQUIRE(node->expr == ExprIdentifier);
     REQUIRE(strcmp(node->attr.name, "rhs") == 0);
+    destroyTreeNode(tree);
 }
 
 TEST_CASE( "Parser::parse correctness", "[Parser]" ) {

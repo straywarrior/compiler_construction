@@ -25,6 +25,30 @@ static char *copy_str(const std::string &src) {
     return dst;
 }
 
+void destroyTreeNode(TreeNode *tree) {
+    if (tree->node_type == NodeExpr && tree->expr == ExprIdentifier) {
+        delete tree->attr.name;
+        tree->attr.name = nullptr;
+    }
+    for (int i = 0; i < TreeNode::MAX_CHILDREN; ++i) {
+        if (tree->children[i] != nullptr) {
+            destroyTreeNode(tree->children[i]);
+        }
+    }
+    // do not use recursion here
+    TreeNode *next_node = nullptr;
+    TreeNode *neighbor = tree->neighbor;
+    while (neighbor != nullptr) {
+        if (neighbor->neighbor != nullptr) {
+            next_node = neighbor->neighbor;
+            neighbor->neighbor = nullptr;
+        }
+        destroyTreeNode(neighbor);
+        neighbor = next_node;
+        next_node = nullptr;
+    }
+}
+
 Parser::Parser() {
     scanner_ = new Scanner();
 }
