@@ -6,7 +6,7 @@ add_definitions('-g')
 add_definitions('-Wall')
 add_definitions('-std=c++11')
 
-set(source_list scanner.cpp)
+set(source_list scanner.cpp parser.cpp)
 
 add_library(${PROJECT_NAME} ${source_list})
 
