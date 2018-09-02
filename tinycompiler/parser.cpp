@@ -11,6 +11,13 @@
 
 namespace tinylang {
 
+static TreeNode *make_stmt_node(StmtProp stmt_prop) {
+    TreeNode *node = new TreeNode();
+    node->node_type = NodeStmt;
+    node->stmt = stmt_prop;
+    return node;
+}
+
 static TreeNode *make_expr_node(ExprProp expr_prop) {
     TreeNode *node = new TreeNode();
     node->node_type = NodeExpr;
@@ -75,33 +82,83 @@ void Parser::match_token(TokenType token) {
 }
 
 void Parser::syntax_error(const char *msg) {
-    printf("Unexpected token: ");
+    printf("Unexpected token: %s\n", token_str_.c_str());
 }
 
 TreeNode *Parser::stmt_sequence() {
-    TreeNode *t = this->statement();
-    if (token_ == TokenType::SEMI) {
-
+    TreeNode *node = this->statement();
+    TreeNode *t = node;
+    while (token_ == TokenType::SEMI) {
+        this->match_token(TokenType::SEMI);
+        t->neighbor = this->statement();
+        t = t->neighbor;
     }
-    return nullptr;
+    return node;
 }
 TreeNode *Parser::statement() {
-    return nullptr;
+    TreeNode *node = nullptr;
+    switch (token_) {
+        case TokenType::IF:
+            node = this->if_stmt();
+            break;
+        case TokenType::REPEAT:
+            node = this->repeat_stmt();
+            break;
+        case TokenType::ID:
+            node = this->assign_stmt();
+            break;
+        case TokenType::READ:
+            node = this->read_stmt();
+            break;
+        case TokenType::WRITE:
+            node = this->write_stmt();
+            break;
+        default:
+            this->syntax_error("");
+            break;
+    }
+    return node;
 }
 TreeNode *Parser::if_stmt() {
-    return nullptr;
+    TreeNode *node = make_stmt_node(StmtIf);
+    this->match_token(TokenType::IF);
+    node->children[0] = this->expr();
+    this->match_token(TokenType::THEN);
+    node->children[1] = this->stmt_sequence();
+    if (token_ == TokenType::ELSE) {
+        node->children[2] = this->stmt_sequence();
+    }
+    this->match_token(TokenType::END);
+    return node;
 }
 TreeNode *Parser::repeat_stmt() {
-    return nullptr;
+    TreeNode *node = make_stmt_node(StmtRepeat);
+    this->match_token(TokenType::REPEAT);
+    node->children[0] = this->stmt_sequence();
+    this->match_token(TokenType::UNTIL);
+    node->children[1] = this->expr();
+    return node;
 }
 TreeNode *Parser::assign_stmt() {
-    return nullptr;
+    TreeNode *node = make_stmt_node(StmtAssign);
+    node->attr.name = copy_str(token_str_);
+    this->match_token(TokenType::ID);
+    this->match_token(TokenType::ASSIGN);
+    node->children[0] = this->expr();
+    return node;
 }
 TreeNode *Parser::read_stmt() {
-    return nullptr;
+    TreeNode *node = make_stmt_node(StmtRead);
+    this->match_token(TokenType::READ);
+    node->attr.name = copy_str(token_str_);
+    this->match_token(TokenType::ID);
+    return node;
 }
 TreeNode *Parser::write_stmt() {
-    return nullptr;
+    TreeNode *node = make_stmt_node(StmtWrite);
+    this->match_token(TokenType::WRITE);
+    node->children[0] = this->expr();
+    return node;
 }
 TreeNode *Parser::expr() {
     TreeNode *node = this->simple_expr();
