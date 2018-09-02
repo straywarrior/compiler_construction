@@ -1,3 +1,7 @@
 link_libraries(tinycompiler)
-add_executable(test_scanner test_scanner.cpp)
-add_executable(test_parser test_parser.cpp)
+set(source_list
+    test_main.cpp
+    test_scanner.cpp
+    test_parser.cpp
+    )
+add_executable(unittest ${source_list})
