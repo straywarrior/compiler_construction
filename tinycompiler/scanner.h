@@ -42,6 +42,8 @@ public:
 
     void setInput(const char *input_data, size_t input_len);
 
+    size_t current_line_no() const { return line_number_; }
+
 private:
     char getNextChar();
     void putNextChar();

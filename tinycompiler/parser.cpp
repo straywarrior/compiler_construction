@@ -82,7 +82,8 @@ void Parser::match_token(TokenType token) {
 }
 
 void Parser::syntax_error(const char *msg) {
-    printf("Unexpected token: %s\n", token_str_.c_str());
+    printf("Unexpected token: %s at line %lu\n",
+           token_str_.c_str(), scanner_->current_line_no());
 }
 
 TreeNode *Parser::stmt_sequence() {

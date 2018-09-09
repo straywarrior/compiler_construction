@@ -139,3 +139,11 @@ TEST_CASE( "Parser::parse correctness", "[Parser]" ) {
     REQUIRE(node->children[1]->attr.val == 233);
     destroyTreeNode(tree);
 }
+
+TEST_CASE( "Parser::parse error correctness", "[Parser]") {
+    Parser parser;
+    std::string input_data;
+    input_data = "if (a < 0)\na = -a\n end";
+    TreeNode * tree = parser.parse(input_data.c_str(), input_data.size());
+    destroyTreeNode(tree);
+}
