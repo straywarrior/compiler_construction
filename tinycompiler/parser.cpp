@@ -77,13 +77,13 @@ void Parser::match_token(TokenType token) {
     if (token == token_) {
         token_ = this->scanner_->getToken(&token_str_);
     } else {
-        this->syntax_error("");
+        this->syntax_error(("Expect: " + getTokenTypeName(token)).c_str());
     }
 }
 
 void Parser::syntax_error(const char *msg) {
-    printf("Unexpected token: %s at line %lu\n",
-           token_str_.c_str(), scanner_->current_line_no());
+    printf("Unexpected token: %s at line %lu\n%s\n",
+           token_str_.c_str(), scanner_->current_line_no(), msg);
 }
 
 TreeNode *Parser::stmt_sequence() {

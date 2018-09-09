@@ -29,6 +29,8 @@ enum class TokenType {
     ASSIGN,EQ,LT,PLUS,MINUS,TIMES,OVER,LPAREN,RPAREN,SEMI
 };
 
+std::string getTokenTypeName(TokenType t);
+
 class Scanner {
 public:
     Scanner();

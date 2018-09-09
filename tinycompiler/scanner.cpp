@@ -34,6 +34,12 @@ enum SymbolType {
     SYMBOL_TYPE_END_FLAG = 8,
 };
 
+struct TokenTypeHasher {
+    std::size_t operator()(TokenType t) const {
+        return static_cast<std::size_t>(t);
+    }
+};
+
 static std::vector<std::vector<StateType>> transition_table;
 static std::unordered_map<std::string, TokenType> reserved_words;
 
@@ -224,5 +230,30 @@ static void initTransitionTable() {
     reserved_words[";"] = TokenType::SEMI;
 }
 
+std::string getTokenTypeName(TokenType t) {
+    static std::unordered_map<TokenType, std::string, TokenTypeHasher> map {
+        {TokenType::IF, "if"},
+        {TokenType::THEN, "then"},
+        {TokenType::ELSE, "else"},
+        {TokenType::END, "end"},
+        {TokenType::REPEAT, "repeat"},
+        {TokenType::UNTIL, "until"},
+        {TokenType::READ, "read"},
+        {TokenType::WRITE, "write"},
+        {TokenType::ID, "IDENTIFIER"},
+        {TokenType::NUM, "NUMBER"},
+        {TokenType::ASSIGN, ":="},
+        {TokenType::EQ, "="},
+        {TokenType::LT, "<"},
+        {TokenType::PLUS, "+"},
+        {TokenType::MINUS, "-"},
+        {TokenType::TIMES, "*"},
+        {TokenType::OVER, "/"},
+        {TokenType::LPAREN, "("},
+        {TokenType::RPAREN, ")"},
+        {TokenType::SEMI, ";"},
+    };
+    return map[t];
+}
 
 } /* namespace tinylang */
