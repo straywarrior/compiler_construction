@@ -27,7 +27,7 @@ static TreeNode *make_expr_node(ExprProp expr_prop) {
 
 static char *copy_str(const std::string &src) {
     size_t n = src.size();
-    char *dst = new char[n];
+    char *dst = new char[n + 1];
     strncpy(dst, src.c_str(), n);
     return dst;
 }
