@@ -8,6 +8,7 @@ add_definitions('-std=c++11')
 
 set(source_list scanner.cpp parser.cpp)
 
-add_library(${PROJECT_NAME} ${source_list})
+add_library(tinycompiler ${source_list})
+add_executable(tiny ${source_list} main.cpp)
 
 add_subdirectory(test)
