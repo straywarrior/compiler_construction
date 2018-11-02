@@ -56,6 +56,8 @@ struct TreeNode {
         char *name;   // for Identifier expression
     } attr; // un-named union for expression
     ExprType expr_type;
+
+    void print();
 };
 
 /**
@@ -94,6 +96,10 @@ private:
     void match_token(TokenType token);
 
     void syntax_error(const char *msg);
+
+
+    TreeNode *make_stmt_node(StmtProp stmt_prop);
+    TreeNode *make_expr_node(ExprProp expr_prop);
 
     // stmt_sequence -> statement {; statement}
     TreeNode *stmt_sequence();

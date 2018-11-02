@@ -11,17 +11,19 @@
 
 namespace tinylang {
 
-static TreeNode *make_stmt_node(StmtProp stmt_prop) {
+TreeNode *Parser::make_stmt_node(StmtProp stmt_prop) {
     TreeNode *node = new TreeNode();
     node->node_type = NodeStmt;
     node->stmt = stmt_prop;
+    node->line_no = this->scanner_->current_line_no();
     return node;
 }
 
-static TreeNode *make_expr_node(ExprProp expr_prop) {
+TreeNode *Parser::make_expr_node(ExprProp expr_prop) {
     TreeNode *node = new TreeNode();
     node->node_type = NodeExpr;
     node->expr = expr_prop;
+    node->line_no = this->scanner_->current_line_no();
     return node;
 }
 
@@ -30,6 +32,22 @@ static char *copy_str(const std::string &src) {
     char *dst = new char[n + 1];
     strncpy(dst, src.c_str(), n);
     return dst;
+}
+
+void TreeNode::print() {
+    printf("TreeNode: line %d, NodeType %d, ", line_no, node_type);
+    if (this->node_type == NodeType::NodeExpr) {
+        printf("ExprProp: %d, ", this->expr);
+        if (this->expr == ExprProp::ExprIdentifier) {
+            printf("Identifier: %s, ", this->attr.name);
+        }
+    } else {
+        printf("StmtProp: %d, ", this->stmt);
+        if (this->stmt == StmtProp::StmtAssign) {
+            printf("Destination: %s, ", this->attr.name);
+        }
+    }
+    printf("\n");
 }
 
 void destroyTreeNode(TreeNode *tree) {
@@ -94,6 +112,7 @@ TreeNode *Parser::stmt_sequence() {
         t->neighbor = this->statement();
         t = t->neighbor;
     }
+    // FIXME: token that is not SEMI is not correctly handled
     return node;
 }
 TreeNode *Parser::statement() {

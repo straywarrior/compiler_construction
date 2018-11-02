@@ -122,6 +122,7 @@ TEST_CASE( "Parser::parse correctness", "[Parser]" ) {
     REQUIRE(node->node_type == NodeExpr);
     REQUIRE(node->expr == ExprOp);
     REQUIRE(node->attr.op == TokenType::LT);
+    REQUIRE(node->children[0]->expr == ExprIdentifier);
     REQUIRE_STRCMP(node->children[0]->attr.name, "a");
     REQUIRE(node->children[1]->attr.val == 0);
 
