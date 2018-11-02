@@ -6,6 +6,7 @@
  */
 
 #include "parser.h"
+#include "analyser.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -34,6 +35,8 @@ int main(int argc, char * argv[]) {
     tinylang::Parser parser = tinylang::Parser();
     tinylang::TreeNode * ast =
         parser.parse(source_lines.c_str(), source_lines.size());
+    tinylang::Analyser analyser;
+    analyser.analyse(ast);
     return 0;
 }
 
