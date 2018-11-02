@@ -141,7 +141,7 @@ TokenType Scanner::getToken(std::string *token_str) {
 
 void Scanner::setNextLine() {
     ++line_number_;
-    for (const char *ptr = current_ptr_; ptr < input_end_; ++ptr) {
+    for (const char *ptr = line_end_ + 1; ptr < input_end_; ++ptr) {
         if (*ptr == '\r') {
             if (ptr + 1 < input_end_ && *(ptr + 1) == '\n') {
                 // for Windows
