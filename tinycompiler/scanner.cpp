@@ -152,6 +152,7 @@ void Scanner::setNextLine() {
             }
         } else if (*ptr == '\n') {
             line_end_ = ptr;
+            break;
         }
     }
 }
@@ -160,7 +161,7 @@ char Scanner::getNextChar() {
     if (input_data_ == nullptr) {
         return '\0';
     }
-    if (input_data_ == line_end_) {
+    if (current_ptr_ == line_end_) {
         this->setNextLine();
     }
     if (current_ptr_ <= input_end_) {
