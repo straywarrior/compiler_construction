@@ -106,13 +106,17 @@ void Parser::syntax_error(const char *msg) {
 
 TreeNode *Parser::stmt_sequence() {
     TreeNode *node = this->statement();
+    if (node == nullptr) {
+        return node;
+    }
     TreeNode *t = node;
-    while (token_ == TokenType::SEMI) {
+    while (token_ != TokenType::ENDFILE && token_ != TokenType::END &&
+           token_ != TokenType::ELSE && token_ != TokenType::UNTIL) {
         this->match_token(TokenType::SEMI);
         t->neighbor = this->statement();
-        t = t->neighbor;
+        if (t->neighbor != nullptr)
+            t = t->neighbor;
     }
-    // FIXME: token that is not SEMI is not correctly handled
     return node;
 }
 TreeNode *Parser::statement() {
@@ -134,7 +138,7 @@ TreeNode *Parser::statement() {
             node = this->write_stmt();
             break;
         default:
-            this->syntax_error("Expect statment.");
+            this->match_token(token_);
             break;
     }
     return node;
