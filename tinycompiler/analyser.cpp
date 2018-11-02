@@ -47,22 +47,62 @@ static int insert_node_to_symtable(SymTable * st, TreeNode * t) {
 }
 
 static int check_node_type(SymTable * st, TreeNode * t) {
+    if (t->node_type == NodeType::NodeExpr) {
+        if (t->expr == ExprProp::ExprConst) {
+            t->expr_type = ExprType::ExpInteger;
+        } else if (t->expr == ExprProp::ExprIdentifier) {
+            // FIXME: look up symtable for type consistence check
+            t->expr_type = ExprType::ExpInteger;
+        } else if (t->expr == ExprProp::ExprOp) {
+            if (t->children[0]->expr_type != ExprType::ExpInteger ||
+                t->children[1]->expr_type != ExprType::ExpInteger) {
+                printf("file:%d: expect operands to be integer\n", t->line_no);
+                return -1;
+            }
+            if (t->attr.op == TokenType::EQ || t->attr.op == TokenType::LT) {
+                t->expr_type = ExprType::ExpBool;
+            } else {
+                t->expr_type = ExprType::ExpInteger;
+            }
+        }
+    } else if (t->node_type == NodeType::NodeStmt) {
+        if (t->stmt == StmtAssign) {
+            // FIXME: for boolean asignment
+            if (t->children[0]->expr_type != ExprType::ExpInteger) {
+                printf("file:%d: expect expression type to be integer\n", t->line_no);
+                return -1;
+            }
+        } else if (t->stmt == StmtIf || t->stmt == StmtRepeat) {
+            if (t->children[0]->expr_type != ExprType::ExpBool) {
+                printf("file:%d: expect expression type to be boolean\n", t->line_no);
+                return -1;
+            }
+        } else if (t->stmt == StmtWrite) {
+            if (t->children[0]->expr_type != ExprType::ExpInteger) {
+                printf("file:%d: expect expression type to be integer\n", t->line_no);
+                return -1;
+            }
+        }
+        // FIXME: t->stmt == StmtRead
+    }
     return 0;
 }
 
-static void traverse(TreeNode * node,
-                     traverse_proc_t pre_proc, traverse_proc_t post_proc) {
+static int traverse(TreeNode * node,
+                    traverse_proc_t pre_proc, traverse_proc_t post_proc) {
+    int ret = 0;
     if (node != nullptr) {
         //node->print();
         pre_proc(node);
         for (int i = 0; i < TreeNode::MAX_CHILDREN; ++i) {
             // recursively call this function
-            traverse(node->children[i], pre_proc, post_proc);
+            ret |= traverse(node->children[i], pre_proc, post_proc);
         }
         post_proc(node);
         // TODO: do not make recursive calls for neighbor nodes
-        traverse(node->neighbor, pre_proc, post_proc);
+        ret |= traverse(node->neighbor, pre_proc, post_proc);
     }
+    return ret;
 }
 
 int Analyser::build_symbol_table(TreeNode * tree) {
