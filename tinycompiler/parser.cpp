@@ -30,7 +30,7 @@ TreeNode *Parser::make_expr_node(ExprProp expr_prop) {
 static char *copy_str(const std::string &src) {
     size_t n = src.size();
     char *dst = new char[n + 1];
-    strncpy(dst, src.c_str(), n);
+    strncpy(dst, src.c_str(), n + 1);
     return dst;
 }
 
@@ -146,6 +146,7 @@ TreeNode *Parser::if_stmt() {
     this->match_token(TokenType::THEN);
     node->children[1] = this->stmt_sequence();
     if (token_ == TokenType::ELSE) {
+        this->match_token(TokenType::ELSE);
         node->children[2] = this->stmt_sequence();
     }
     this->match_token(TokenType::END);
