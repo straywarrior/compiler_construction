@@ -10,14 +10,14 @@
 
 namespace tinylang {
 
-using traverse_proc_t = std::function<void(TreeNode *)>;
+using traverse_proc_t = std::function<int(TreeNode *)>;
 
 //! @brief Just do nothing
-static void empty_proc(TreeNode * t) {
-    return;
+static int empty_proc(TreeNode * t) {
+    return 0;
 }
 
-static void insert_node_to_symtable(SymTable * st, TreeNode * t) {
+static int insert_node_to_symtable(SymTable * st, TreeNode * t) {
     switch (t->node_type) {
         case NodeType::NodeStmt:
             switch (t->stmt) {
@@ -31,20 +31,23 @@ static void insert_node_to_symtable(SymTable * st, TreeNode * t) {
             }
             break;
         case NodeType::NodeExpr:
-            switch (t->expr) {
-                case ExprProp::ExprIdentifier:
-                    st->insert(t->attr.name, t->line_no);
-                    break;
-                default:
-                    break;
+            if (t->expr == ExprProp::ExprIdentifier) {
+                if (st->find(t->attr.name) != 0) {
+                    printf("file:%d: error: use of undeclared identifier '%s'\n",
+                            t->line_no, t->attr.name);
+                    return -1;
+                }
+                st->insert(t->attr.name, t->line_no);
             }
             break;
         default:
             break;
     }
+    return 0;
 }
 
-static void check_node_type(SymTable * st, TreeNode * t) {
+static int check_node_type(SymTable * st, TreeNode * t) {
+    return 0;
 }
 
 static void traverse(TreeNode * node,
